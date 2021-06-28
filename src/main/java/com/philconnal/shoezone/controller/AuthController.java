@@ -6,10 +6,9 @@ import com.philconnal.shoezone.common.exception.errors.MyBadRequestException;
 import com.philconnal.shoezone.controller.api.APIName;
 import com.philconnal.shoezone.controller.request.AuthUserRequest;
 import com.philconnal.shoezone.controller.response.AuthResponse;
-import com.philconnal.shoezone.util.ResponseUtil;
 import com.philconnal.shoezone.controller.response.RestApiResponse;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.philconnal.shoezone.jwt.JwtTokenProvider;
+import com.philconnal.shoezone.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,57 +21,48 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.Date;
 
 @RestController
 @RequestMapping(APIName.AUTHENTICATE_API)
 public class AuthController {
 
     private final ResponseUtil responseUtil;
-
+    private final JwtTokenProvider jwtTokenProvider;
     @Autowired
     private final AuthenticationManager authenticationManager;
 
 
-    public AuthController(ResponseUtil responseUtil, AuthenticationManager authenticationManager) {
+    public AuthController(ResponseUtil responseUtil, JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
         this.responseUtil = responseUtil;
+        this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManager = authenticationManager;
     }
 
     @PostMapping()
     public ResponseEntity<RestApiResponse> authenticateUser(@Valid @RequestBody AuthUserRequest loginRequest) {
-        Authentication authentication;
 
         try {
-            authentication = authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getUsername(),
-                            loginRequest.getPassword()
-                    )
-            );
+                            loginRequest.getPassword()));
+
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+            AuthUser principal = (AuthUser) authentication.getPrincipal();
+
+            String token = jwtTokenProvider.generateToken(principal);
+
+            AuthResponse authResponse = new AuthResponse();
+
+            authResponse.setToken(token);
+            authResponse.setUsername(principal.getUsername());
+
+            return responseUtil.successResponse(authResponse);
         } catch (MyBadRequestException e) {
             throw new RuntimeException(e);
         }
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String key = "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello";
-
-        AuthUser principal = (AuthUser) authentication.getPrincipal();
-
-        String token = Jwts.builder()
-                .setSubject(principal.getUsername())
-                .claim("authorities", principal.getAuthorities())
-                .setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
-                .signWith(Keys.hmacShaKeyFor(key.getBytes()))
-                .compact();
-
-        AuthResponse authResponse = new AuthResponse();
-
-        authResponse.setToken("Bearer " + token);
-        authResponse.setUsername(principal.getUsername());
-        return responseUtil.successResponse(authResponse);
     }
 }

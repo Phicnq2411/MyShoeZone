@@ -2,14 +2,17 @@ package com.philconnal.shoezone.common.validation;
 
 import com.philconnal.shoezone.common.enums.APIStatus;
 import com.philconnal.shoezone.common.exception.ApplicationException;
-import com.philconnal.shoezone.common.exception.errors.MyExistedException;
 import com.philconnal.shoezone.common.exception.errors.MyBadRequestException;
+import com.philconnal.shoezone.common.exception.errors.MyExistedException;
+import com.philconnal.shoezone.common.exception.errors.MyParseDateException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-;
 
 /**
  * @author DiGiEx
@@ -154,6 +157,19 @@ public class Validator {
         if (!containList.contains(value)) {
             throw new ApplicationException(APIStatus.BAD_REQUEST, "Value " + value + " was not in " + containList.toString());
         }
+    }
+
+    public Date getDateFromString(String data) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        formatter.setLenient(false);
+
+        Date date = null;
+        try {
+            date = formatter.parse(data);
+        } catch (ParseException e) {
+            throw new MyParseDateException("Invalid date(dd-MM-yyyy): " + data);
+        }
+        return date;
     }
 
 }

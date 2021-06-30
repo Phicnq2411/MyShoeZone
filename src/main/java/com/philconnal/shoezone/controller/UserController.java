@@ -1,4 +1,4 @@
-package com.philconnal.shoezone.controller.user;
+package com.philconnal.shoezone.controller;
 
 
 import com.philconnal.shoezone.common.enums.AppStatus;
@@ -48,11 +48,10 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<RestApiResponse> addUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
         try {
-            Validator.validateEmail(createUserRequest.getEmail());
-
             User oneByUsername = userService.getUserByUsername(createUserRequest.getUsername().trim());
             if (oneByUsername != null)
                 throw new MyExistedException(String.format("User %s already exist", createUserRequest.getUsername()));
+            Validator.validateEmail(createUserRequest.getEmail());
 
             User oneByEmail = userService.getUserByEmail(createUserRequest.getEmail());
             if (oneByEmail != null)

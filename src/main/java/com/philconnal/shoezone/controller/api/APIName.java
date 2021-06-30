@@ -13,5 +13,8 @@ public interface APIName {
 
     // User APIs
     String USER_API = BASE_API_URL + "/user";
+    String SIGN_UP = BASE_API_URL + "/registration";
+    String BRANCH = BASE_API_URL + "/branch";
+    String PRODUCT = BASE_API_URL + "/product";
 
 }

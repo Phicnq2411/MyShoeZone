@@ -4,15 +4,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.philconnal.shoezone.common.enums.AppStatus;
 import com.philconnal.shoezone.common.enums.UserRole;
 import com.philconnal.shoezone.entity.auditable.AuditableDomain;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 
+@EqualsAndHashCode(callSuper = true)
+@DynamicInsert
+@DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

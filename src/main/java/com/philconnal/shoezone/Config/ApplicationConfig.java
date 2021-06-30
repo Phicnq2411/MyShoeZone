@@ -3,6 +3,7 @@ package com.philconnal.shoezone.Config;
 
 import com.philconnal.shoezone.auth.ApplicationUserService;
 import com.philconnal.shoezone.entity.auditable.AuditorAwareImpl;
+import com.philconnal.shoezone.jwt.JwtAuthenticationEntryPoint;
 import com.philconnal.shoezone.jwt.JwtTokenVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -21,8 +21,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Optional;
-
 @Configuration
 @EnableWebSecurity
 @EnableJpaAuditing(auditorAwareRef = "aware")
@@ -31,24 +29,28 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
     private final ApplicationUserService authService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Autowired
-    public ApplicationConfig(PasswordEncoder passwordEncoder, ApplicationUserService authService) {
+    public ApplicationConfig(PasswordEncoder passwordEncoder, ApplicationUserService authService, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/", "/css/**", "/js/**", "/api/auth","/api/registration").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests()
-                .antMatchers("/", "/css/**", "/js/**", "/api/auth").permitAll()
-                .anyRequest()
-                .authenticated();
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
         http.addFilterBefore(getJwtTokenVerifier(), UsernamePasswordAuthenticationFilter.class);
     }
 

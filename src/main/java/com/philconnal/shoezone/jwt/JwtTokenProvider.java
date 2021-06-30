@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.philconnal.shoezone.auth.AuthUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,10 +24,10 @@ public class JwtTokenProvider {
 
     private Claims getBody(String authorizationHeader) {
         String token = authorizationHeader.replace("Bearer ", "");
-        Jws<Claims> claimsJws = Jwts.parser()
-                .setSigningKey(Keys.hmacShaKeyFor(KEY.getBytes()))
-                .parseClaimsJws(token);
-        return claimsJws.getBody();
+            Jws<Claims> claimsJws = Jwts.parser()
+                    .setSigningKey(Keys.hmacShaKeyFor(KEY.getBytes()))
+                    .parseClaimsJws(token);
+            return claimsJws.getBody();
     }
 
     public String getUnAuthorizationToken(String authorizationHeard) {

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Set;
+import java.util.jar.JarException;
 
 @Slf4j
 public class JwtTokenVerifier extends OncePerRequestFilter {
@@ -44,15 +45,14 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println("Verifier");
-        } catch (
-                JwtException e) {
-            throw new IllegalStateException(
-                    String.format("Token %s cannot be trusted",
+        } catch (JwtException e) {
+            throw new JwtException(
+                    String.format("Token %s invalid",
                             jwtTokenProvider.getUnAuthorizationToken(authorizationHeader)));
         }
-
         filterChain.doFilter(request, response);
+
+
     }
 
 }

@@ -47,7 +47,6 @@ public class AuthController {
                             loginRequest.getUsername(),
                             loginRequest.getPassword()));
 
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
 

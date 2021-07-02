@@ -26,7 +26,7 @@ public class AuUserServiceIml implements AuthUserService {
         return new AuthUser(
                 userByUsername.getUsername(),
                 passwordEncoder.encode(userByUsername.getPassword()),
-                userByUsername.getRole().getAuthorities()
-        );
+                userByUsername.getRole().getAuthorities(),
+                true, userByUsername.isNotLocked(), userByUsername.isActive(), true);
     }
 }

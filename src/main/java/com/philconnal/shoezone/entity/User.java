@@ -7,9 +7,12 @@ import com.philconnal.shoezone.entity.auditable.AuditableDomain;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -17,7 +20,8 @@ import java.io.Serializable;
 @DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Setter
+@Getter
 @Entity(name = "user")
 @ToString
 public class User extends AuditableDomain<String> implements Serializable {
@@ -36,4 +40,9 @@ public class User extends AuditableDomain<String> implements Serializable {
     @Column(nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private AppStatus status;
+    private Date lastLoginDate;
+    private Date logInDateDisplay;
+    private boolean isActive;
+    private boolean isNotLocked;
+
 }

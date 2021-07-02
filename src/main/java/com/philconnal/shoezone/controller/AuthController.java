@@ -42,6 +42,7 @@ public class AuthController {
     public ResponseEntity<RestApiResponse> authenticateUser(@Valid @RequestBody AuthUserRequest loginRequest) {
 
         try {
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getUsername(),

@@ -30,7 +30,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
 
         if (!jwtTokenProvider.validateToken(authorizationHeader)) {
-            System.out.println(jwtTokenProvider.validateToken(authorizationHeader));
             filterChain.doFilter(request, response);
             return;
         }

@@ -14,6 +14,8 @@ import com.philconnal.shoezone.entity.User;
 import com.philconnal.shoezone.service.UserService;
 import com.philconnal.shoezone.util.ResponseUtil;
 import com.philconnal.shoezone.controller.response.RestApiResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(APIName.USER_API)
+@Api( tags = "Users")
 public class UserController {
 
     private final UserService userService;
@@ -36,6 +39,7 @@ public class UserController {
     }
 
     // Get all users
+    @ApiOperation(value = "This method is used to get the clients.")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<RestApiResponse> getAllUsers() {

@@ -90,8 +90,13 @@
             <version>0.10.7</version>
             <scope>runtime</scope>
         </dependency>
+        <!--        Swagger with authentication -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
         <!--		Testing-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

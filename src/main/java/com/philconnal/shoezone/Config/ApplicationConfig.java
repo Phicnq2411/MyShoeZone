@@ -30,6 +30,12 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationUserService authService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private static final String[] PUBLIC_URLS = {
+            "/v2/api-docs",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/webjars/**", "/", "/css/**", "/js/**", "/api/auth", "/api/registration"
+    };
 
     @Autowired
     public ApplicationConfig(PasswordEncoder passwordEncoder, ApplicationUserService authService, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
@@ -43,7 +49,7 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/css/**", "/js/**", "/api/auth","/api/registration").permitAll()
+                .antMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

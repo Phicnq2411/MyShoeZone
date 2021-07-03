@@ -1,7 +1,7 @@
 package com.philconnal.shoezone.constant;
 
 public class SwaggerConstant {
-    public static final String SECURITY_REFERENCE = "Token Access";
+    public static final String SECURITY_REFERENCE = "Authentication";
     public static final String AUTHORIZATION_DESCRIPTION = "Full API Permission";
     public static final String AUTHORIZATION_SCOPE = "Unlimited";
     public static final String CONTACT_EMAIL = "phicnq2411@gmail.com";

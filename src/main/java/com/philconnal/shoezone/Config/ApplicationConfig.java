@@ -3,6 +3,7 @@ package com.philconnal.shoezone.Config;
 
 import com.philconnal.shoezone.auth.ApplicationUserService;
 import com.philconnal.shoezone.entity.auditable.AuditorAwareImpl;
+import com.philconnal.shoezone.jwt.JwtAccessDeniedHandler;
 import com.philconnal.shoezone.jwt.JwtAuthenticationEntryPoint;
 import com.philconnal.shoezone.jwt.JwtTokenVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationUserService authService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private static final String[] PUBLIC_URLS = {
             "/v2/api-docs",
             "/swagger-resources/**",
@@ -38,10 +40,11 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
     };
 
     @Autowired
-    public ApplicationConfig(PasswordEncoder passwordEncoder, ApplicationUserService authService, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+    public ApplicationConfig(PasswordEncoder passwordEncoder, ApplicationUserService authService, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
     @Override
@@ -56,7 +59,8 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint);
         http.addFilterBefore(getJwtTokenVerifier(), UsernamePasswordAuthenticationFilter.class);
     }
 

@@ -11,6 +11,7 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,16 +45,18 @@ public class SwaggerConfig {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey(SECURITY_REFERENCE, AUTHORIZATION, SecurityScheme.In.HEADER.name());
+        return new ApiKey("JWT", "Authorization", "header");
     }
 
     private SecurityContext securityContext() {
-        return SecurityContext.builder().securityReferences(securityReference()).build();
+        return SecurityContext.builder().securityReferences(defaultAuth()).build();
     }
 
-    private List<SecurityReference> securityReference() {
-        AuthorizationScope[] authorizationScope = {new AuthorizationScope(AUTHORIZATION_SCOPE, AUTHORIZATION_DESCRIPTION)};
-        return singletonList(new SecurityReference(SECURITY_REFERENCE, authorizationScope));
+    private List<SecurityReference> defaultAuth() {
+        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        return singletonList(new SecurityReference("JWT", authorizationScopes));
     }
 
     @Bean
@@ -74,7 +77,8 @@ public class SwaggerConfig {
     UiConfiguration uiConfig() {
         return UiConfigurationBuilder.builder()
                 .deepLinking(true)
-                .displayOperationId(false)
+//               Display the method name at the end of the API
+                .displayOperationId(true)
                 .defaultModelsExpandDepth(1)
                 .defaultModelRendering(ModelRendering.MODEL)
                 .displayRequestDuration(true)
@@ -82,7 +86,7 @@ public class SwaggerConfig {
                 .filter(false)
                 .maxDisplayedTags(null)
                 .operationsSorter(OperationsSorter.ALPHA)
-                .showExtensions(false)
+                .showExtensions(true)
                 .showCommonExtensions(true)
                 .tagsSorter(TagsSorter.ALPHA)
                 .supportedSubmitMethods(UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS)

@@ -6,6 +6,7 @@ import com.philconnal.shoezone.common.exception.anotationvalidation.BadRequestEx
 import com.philconnal.shoezone.common.exception.errors.MyExistedException;
 import com.philconnal.shoezone.common.exception.errors.MyNotFoundException;
 import com.philconnal.shoezone.common.validation.Validator;
+import com.philconnal.shoezone.constant.ExceptionConstant;
 import com.philconnal.shoezone.controller.api.APIName;
 import com.philconnal.shoezone.controller.helper.UserHelper;
 import com.philconnal.shoezone.controller.request.CreateUserRequest;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.philconnal.shoezone.constant.ExceptionConstant.USER_EXISTED;
+import static com.philconnal.shoezone.constant.ExceptionConstant.USER_NOT_FOUND;
 
 @RestController
 @RequestMapping(APIName.USER_API)
@@ -54,12 +58,12 @@ public class UserController {
         try {
             User oneByUsername = userService.getUserByUsername(createUserRequest.getUsername().trim());
             if (oneByUsername != null)
-                throw new MyExistedException(String.format("User %s already exist", createUserRequest.getUsername()));
+                throw new MyExistedException(String.format(USER_EXISTED, createUserRequest.getUsername()));
             Validator.validateEmail(createUserRequest.getEmail());
 
             User oneByEmail = userService.getUserByEmail(createUserRequest.getEmail());
             if (oneByEmail != null)
-                throw new MyExistedException(String.format("User %s already exist", createUserRequest.getEmail()));
+                throw new MyExistedException(String.format(USER_EXISTED, createUserRequest.getEmail()));
 
             User user = userHelper.createUser(createUserRequest);
             userService.saveUser(user);
@@ -102,7 +106,7 @@ public class UserController {
             user = userService.getUserByUsername(username);
         }
         if (user == null)
-            throw new MyNotFoundException(String.format("User %s not found", username));
+            throw new MyNotFoundException(String.format(USER_NOT_FOUND, username));
         user.setStatus(AppStatus.INACTIVE);
         userService.saveUser(user);
         return responseUtil.successResponse("Ok");

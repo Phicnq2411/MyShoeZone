@@ -5,6 +5,7 @@ import com.philconnal.shoezone.exception.domain.EmailNotFoundException;
 import com.philconnal.shoezone.exception.domain.UserNotFoundException;
 import com.philconnal.shoezone.exception.domain.UsernameExistException;
 import com.philconnal.shoezone.jwt.HttpResponse;
+import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
@@ -59,10 +61,10 @@ public class ExceptionHandling implements ErrorController {
         return createHttpResponse(UNAUTHORIZED, ACCOUNT_LOCKED);
     }
 
-//	@ExceptionHandler(TokenExpiredException.class)
-//	public ResponseEntity<HttpResponse> tjokenExpiredException(TokenExpiredException exception) {
-//		return createHttpResponse(UNAUTHORIZED, exception.getMessage().toUpperCase());
-//	}
+	@ExceptionHandler(JwtException.class)
+	public ResponseEntity<HttpResponse> tokenExpiredException(JwtException exception) {
+		return createHttpResponse(UNAUTHORIZED, exception.getMessage().toUpperCase());
+	}
 
     @ExceptionHandler(EmailExistException.class)
     public ResponseEntity<HttpResponse> emailExistException(EmailExistException exception) {
@@ -114,7 +116,7 @@ public class ExceptionHandling implements ErrorController {
     }
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
-        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,
+        return new ResponseEntity<>(new HttpResponse( httpStatus.value(), httpStatus,
                 httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()), httpStatus);
     }
 

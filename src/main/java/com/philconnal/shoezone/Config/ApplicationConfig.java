@@ -1,6 +1,7 @@
 package com.philconnal.shoezone.Config;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.philconnal.shoezone.auth.ApplicationUserService;
 import com.philconnal.shoezone.entity.auditable.AuditorAwareImpl;
 import com.philconnal.shoezone.jwt.JwtAccessDeniedHandler;
@@ -20,7 +21,20 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.GenericFilterBean;
+
+import javax.naming.AuthenticationException;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.TimeZone;
 
 @Configuration
 @EnableWebSecurity
@@ -62,6 +76,10 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint);
         http.addFilterBefore(getJwtTokenVerifier(), UsernamePasswordAuthenticationFilter.class);
+//         new ExceptionTranslationFilter(jwtAuthenticationEntryPoint);
+//
+//        http.addFilterAfter(getJwtTokenVerifier(),
+//                ExceptionTranslationFilter.class);
     }
 
     @Bean
@@ -93,4 +111,9 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter {
         provider.setUserDetailsService(authService);
         return provider;
     }
+    @Autowired
+    public void configureJackson(ObjectMapper objectMapper) {
+        objectMapper.setTimeZone(TimeZone.getDefault());
+    }
+
 }

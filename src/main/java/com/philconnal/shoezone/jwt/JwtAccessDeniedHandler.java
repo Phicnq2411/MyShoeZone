@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 
 import static com.philconnal.shoezone.common.constant.SecurityConstant.ACCESS_DENIED_MESSAGE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -25,7 +26,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         OutputStream out = response.getOutputStream();
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(out, httpResponse);
-        System.out.println("Phi forbidden acees deny");
         out.flush();
 
     }

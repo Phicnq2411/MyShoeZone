@@ -2,48 +2,48 @@ package com.philconnal.shoezone.common.exception;
 
 import com.philconnal.shoezone.common.exception.errors.MyBadRequestException;
 import com.philconnal.shoezone.common.exception.errors.MyExistedException;
+import com.philconnal.shoezone.common.exception.errors.MyNotFoundException;
 import com.philconnal.shoezone.common.exception.errors.MyParseDateException;
+import com.philconnal.shoezone.jwt.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Date;
+
+import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 public class MyExceptionHandler {
 
+    @ExceptionHandler(MyNotFoundException.class)
+    public ResponseEntity<HttpResponse> notfound(MyNotFoundException e) {
+        return getHttpResponse(e, NOT_FOUND);
+    }
+
     @ExceptionHandler(MyExistedException.class)
-    public ResponseEntity<ApiError> existed(MyExistedException exception) {
-        HttpStatus methodNotAllowed = HttpStatus.METHOD_NOT_ALLOWED;
-        final ApiError apiError = getApiError(exception, methodNotAllowed);
-        return new ResponseEntity<>(apiError, methodNotAllowed);
+    public ResponseEntity<HttpResponse> existed(MyExistedException e) {
+        return getHttpResponse(e, METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(MyBadRequestException.class)
-    public ResponseEntity<ApiError> existed(MyBadRequestException exception) {
-        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
-        final ApiError apiError = getApiError(exception, badRequest);
-        return new ResponseEntity<>(apiError, badRequest);
+    public ResponseEntity<HttpResponse> existed(MyBadRequestException e) {
+        return getHttpResponse(e, BAD_REQUEST);
     }
 
     @ExceptionHandler(MyParseDateException.class)
-    public ResponseEntity<ApiError> invalidToken(MyParseDateException exception) {
-        HttpStatus forbidden = HttpStatus.BAD_REQUEST;
-        final ApiError apiError = getApiError(exception, forbidden);
-        return new ResponseEntity<>(apiError, forbidden);
+    public ResponseEntity<HttpResponse> invalidToken(MyParseDateException e) {
+        return getHttpResponse(e, NOT_FOUND);
     }
 
-    private ApiError getApiError(Exception e, HttpStatus status) {
-        ApiError apiError = new ApiError();
-        apiError.setError(status.value());
-        apiError.setStatus(status);
-        apiError.setMessage(e.getMessage());
-        apiError.setDescription("");
-        apiError.setTimestamp(ZonedDateTime.now(ZoneId.of("Z")));
-        return apiError;
+    private ResponseEntity<HttpResponse> getHttpResponse(RuntimeException e, HttpStatus status) {
+        HttpResponse httpResponse =
+                new HttpResponse(status.value(), status, status.getReasonPhrase().toUpperCase(), e.getMessage().toUpperCase());
+        return new ResponseEntity<>(httpResponse, status);
     }
-
 
 }

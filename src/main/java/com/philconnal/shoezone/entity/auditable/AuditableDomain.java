@@ -53,14 +53,13 @@ public abstract class AuditableDomain<U> implements Serializable {
 
     @PrePersist
     protected void onCreate() {
-        this.created_date = DateUtil.convertToUTC(new Date());
+        this.created_date = new Date();
         this.updated_date = null;
         this.updated_by = null;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updated_date = DateUtil.convertToUTC(new Date());
+        this.updated_date = new Date();
     }
-
 }

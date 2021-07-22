@@ -35,7 +35,7 @@ public class RegistrationController {
         this.newerService = newerService;
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<RestApiResponse> addUser(@Valid @RequestBody NewerRequest request) {
         try {

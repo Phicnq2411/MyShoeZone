@@ -86,6 +86,8 @@ public class NewerHelper {
         user.setPassword(newUser.getPassword());
         user.setRole(UserRole.USER);
         user.setStatus(AppStatus.ACTIVE);
+        user.setNotLocked(true);
+        user.setActive(true);
         return user;
     }
 }

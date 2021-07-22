@@ -36,7 +36,7 @@ public class UserController {
     }
 
     // Get all users
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<RestApiResponse> getAllUsers() {
         List<User> allUsers = userService.getAllUsers();

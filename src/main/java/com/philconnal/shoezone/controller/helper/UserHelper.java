@@ -30,6 +30,8 @@ public class UserHelper {
         user.setUsername(createUserRequest.getUsername());
         user.setStatus(AppStatus.ACTIVE);
         user.setRole(UserRole.USER);
+        user.setNotLocked(true);
+        user.setActive(true);
         return user;
     }
 
